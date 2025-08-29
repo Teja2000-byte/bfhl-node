@@ -16,7 +16,7 @@ app.use(
 //app.use(bodyParser.json());
 app.use((err, req, res, next) => {
     if (err.message === "Invalid JSON format") {
-      return res.status(200).json({
+      return res.status(400).json({
         is_success: false,
         user_id: "teja_gopal_01012001",
         email: "youremail@example.com",
@@ -48,7 +48,7 @@ function alternatingCapsReverse(lettersOnly) {
 app.post("/bfhl", (req, res) => {
   try {
     if (!req.body || req.body.data === undefined) {
-        return res.json({
+        return res.status(400).json({
           is_success: false,
           user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
           email: EMAIL,
@@ -65,7 +65,7 @@ app.post("/bfhl", (req, res) => {
   
       // ✅ Step 2: Data exists but not an array
       if (!Array.isArray(req.body.data)) {
-        return res.json({
+        return res.status(400).json({
           is_success: false,
           user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
           email: EMAIL,
@@ -106,10 +106,28 @@ app.post("/bfhl", (req, res) => {
     let sum = BigInt(0);
     let lettersOnly = "";
 
-    data.forEach((token) => {
+    for (let token of data) {
         if (typeof token !== "string") {
-            throw new Error("All elements in 'data' must be strings");
-          }
+          return res.status(400).json({
+            is_success: false,
+            user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
+            email: EMAIL,
+            roll_number: ROLL_NUMBER,
+            odd_numbers: [],
+            even_numbers: [],
+            alphabets: [],
+            special_characters: [],
+            sum: "0",
+            concat_string: "",
+            message: "All elements in 'data' must be strings",
+          });
+        }
+  
+        
+    // data.forEach((token) => {
+    //     if (typeof token !== "string") {
+    //         throw new Error("All elements in 'data' must be strings");
+    //       }
     
       if (/^[A-Za-z]+$/.test(token)) {
         alphabets.push(token.toUpperCase());
@@ -124,38 +142,51 @@ app.post("/bfhl", (req, res) => {
         // also collect any letters inside special tokens
         lettersOnly += token.replace(/[^A-Za-z]/g, "");
       }
-    });
+    }
+    return res.status(200).json({
+        is_success: true,
+        user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
+        email: EMAIL,
+        roll_number: ROLL_NUMBER,
+        odd_numbers: oddNumbers,
+        even_numbers: evenNumbers,
+        alphabets: alphabets,
+        special_characters: specialCharacters,
+        sum: sum.toString(),
+        concat_string: alternatingCapsReverse(lettersOnly),
+      });
+    } 
 
-    const response = {
-      is_success: true,
-      user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
-      email: EMAIL,
-      roll_number: ROLL_NUMBER,
-      odd_numbers: oddNumbers,
-      even_numbers: evenNumbers,
-      alphabets: alphabets,
-      special_characters: specialCharacters,
-      sum: sum.toString(),
-      concat_string: alternatingCapsReverse(lettersOnly),
-    };
+    // const response = {
+    //   is_success: true,
+    //   user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
+    //   email: EMAIL,
+    //   roll_number: ROLL_NUMBER,
+    //   odd_numbers: oddNumbers,
+    //   even_numbers: evenNumbers,
+    //   alphabets: alphabets,
+    //   special_characters: specialCharacters,
+    //   sum: sum.toString(),
+    //   concat_string: alternatingCapsReverse(lettersOnly),
+    // };
 
-    res.json(response);
-  } catch (err) {
-    res.json({
-      is_success: false,
-      user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
-      email: EMAIL,
-      roll_number: ROLL_NUMBER,
-      odd_numbers: [],
-      even_numbers: [],
-      alphabets: [],
-      special_characters: [],
-      sum: "0",
-      concat_string: "",
-      message: "Failed to process: " + err.message,
-    });
-  }
-});
+    //res.json(response);
+    catch (err) {
+        res.json({
+            is_success: false,
+            user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
+            email: EMAIL,
+            roll_number: ROLL_NUMBER,
+            odd_numbers: [],
+            even_numbers: [],
+            alphabets: [],
+            special_characters: [],
+            sum: "0",
+            concat_string: "",
+            message: "Failed to process: " + err.message,
+          });
+        }
+      });
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
