@@ -5,10 +5,10 @@ const app = express();
 app.use(bodyParser.json());
 
 // Your details
-const FULL_NAME = process.env.FULL_NAME || "teja_gopal";
-const DOB_DDMMYYYY = process.env.DOB_DDMMYYYY || "01012001";
-const EMAIL = process.env.EMAIL || "youremail@example.com";
-const ROLL_NUMBER = process.env.ROLL_NUMBER || "ABCD123";
+const FULL_NAME = process.env.FULL_NAME || "Somu_Teja_Gopal";
+const DOB_DDMMYYYY = process.env.DOB_DDMMYYYY || "1308005";
+const EMAIL = process.env.EMAIL || "tejagopal33@example.com";
+const ROLL_NUMBER = process.env.ROLL_NUMBER || "22BIT0339";
 
 function alternatingCapsReverse(lettersOnly) {
   let reversed = lettersOnly.split("").reverse();
