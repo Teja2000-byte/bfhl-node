@@ -2,9 +2,37 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const app = express();
-app.use(bodyParser.json());
-
-// Your details
+app.use(
+    bodyParser.json({
+      verify: (req, res, buf) => {
+        try {
+          JSON.parse(buf);
+        } catch (e) {
+          throw new Error("Invalid JSON format");
+        }
+      },
+    })
+);
+//app.use(bodyParser.json());
+app.use((err, req, res, next) => {
+    if (err.message === "Invalid JSON format") {
+      return res.status(200).json({
+        is_success: false,
+        user_id: "teja_gopal_01012001",
+        email: "youremail@example.com",
+        roll_number: "ABCD123",
+        odd_numbers: [],
+        even_numbers: [],
+        alphabets: [],
+        special_characters: [],
+        sum: "0",
+        concat_string: "",
+        message: "Invalid JSON: Please check request body format",
+      });
+    }
+    next(err);
+});
+// My details
 const FULL_NAME = process.env.FULL_NAME || "Somu_Teja_Gopal";
 const DOB_DDMMYYYY = process.env.DOB_DDMMYYYY || "1308005";
 const EMAIL = process.env.EMAIL || "tejagopal33@example.com";
