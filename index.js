@@ -47,7 +47,7 @@ function alternatingCapsReverse(lettersOnly) {
 
 app.post("/bfhl", (req, res) => {
   try {
-    if (!req.body || !Array.isArray(req.body.data)) {
+    if (!req.body || req.body.data === undefined) {
         return res.json({
           is_success: false,
           user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
@@ -59,9 +59,43 @@ app.post("/bfhl", (req, res) => {
           special_characters: [],
           sum: "0",
           concat_string: "",
-          message: "Invalid input: 'data' field must be an array"
+          message: "Missing input: 'data' field is required",
         });
       }
+  
+      // ✅ Step 2: Data exists but not an array
+      if (!Array.isArray(req.body.data)) {
+        return res.json({
+          is_success: false,
+          user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
+          email: EMAIL,
+          roll_number: ROLL_NUMBER,
+          odd_numbers: [],
+          even_numbers: [],
+          alphabets: [],
+          special_characters: [],
+          sum: "0",
+          concat_string: "",
+          message: "Invalid input: 'data' must be an array",
+        });
+      }
+  
+      
+    // if (!req.body || !Array.isArray(req.body.data)) {
+    //     return res.json({
+    //       is_success: false,
+    //       user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
+    //       email: EMAIL,
+    //       roll_number: ROLL_NUMBER,
+    //       odd_numbers: [],
+    //       even_numbers: [],
+    //       alphabets: [],
+    //       special_characters: [],
+    //       sum: "0",
+    //       concat_string: "",
+    //       message: "Invalid input: 'data' field must be an array"
+    //     });
+    //   }
   
       
     const data = req.body.data || [];
@@ -73,6 +107,10 @@ app.post("/bfhl", (req, res) => {
     let lettersOnly = "";
 
     data.forEach((token) => {
+        if (typeof token !== "string") {
+            throw new Error("All elements in 'data' must be strings");
+          }
+    
       if (/^[A-Za-z]+$/.test(token)) {
         alphabets.push(token.toUpperCase());
         lettersOnly += token.replace(/[^A-Za-z]/g, "");
