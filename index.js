@@ -19,6 +19,23 @@ function alternatingCapsReverse(lettersOnly) {
 
 app.post("/bfhl", (req, res) => {
   try {
+    if (!req.body || !Array.isArray(req.body.data)) {
+        return res.json({
+          is_success: false,
+          user_id: `${FULL_NAME.toLowerCase()}_${DOB_DDMMYYYY}`,
+          email: EMAIL,
+          roll_number: ROLL_NUMBER,
+          odd_numbers: [],
+          even_numbers: [],
+          alphabets: [],
+          special_characters: [],
+          sum: "0",
+          concat_string: "",
+          message: "Invalid input: 'data' field must be an array"
+        });
+      }
+  
+      
     const data = req.body.data || [];
     const oddNumbers = [];
     const evenNumbers = [];
